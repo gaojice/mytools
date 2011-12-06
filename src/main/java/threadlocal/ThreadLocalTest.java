@@ -9,6 +9,7 @@ public class ThreadLocalTest implements Runnable {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static ThreadLocal counter = new ThreadLocal() {
 		protected Object initialValue() {
 			return new Counter();
