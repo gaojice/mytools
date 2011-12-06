@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"
+	default-lazy-init="false">
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="timeoutTrigger" />
+				<ref bean="successTrigger" />
+				<ref bean="failedTrigger" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- Timeout Scanning -->
+	<bean id="timeoutScanningJob" class="com.chinacache.taskmanager.job.TimeoutScanningJob">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+	</bean>
+	<bean id="timeoutJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="timeoutScanningJob" />
+		<property name="targetMethod" value="doIt" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="timeoutTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="timeoutJobDetail" />
+		<property name="startDelay" value="10000" />
+		<property name="repeatInterval" value="60000" />
+	</bean>
+
+	<!-- Success Scanning -->
+	<bean id="successScanningJob" class="com.chinacache.taskmanager.job.SuccessScanningJob">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+	</bean>
+	<bean id="successJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="successScanningJob" />
+		<property name="targetMethod" value="doIt" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="successTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="successJobDetail" />
+		<property name="startDelay" value="10000" />
+		<property name="repeatInterval" value="60000" />
+	</bean>
+
+	<!-- Success Scanning -->
+	<bean id="failedScanningJob" class="com.chinacache.taskmanager.job.FailedScanningJob">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+	</bean>
+	<bean id="failedJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="failedScanningJob" />
+		<property name="targetMethod" value="doIt" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="failedTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="failedJobDetail" />
+		<property name="startDelay" value="10000" />
+		<property name="repeatInterval" value="60000" />
+	</bean>
+	
+</beans>

@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/41524/oss-tm2/branches/Patch-2.0.1.1/src/main/resources/spring
+END
+applicationContext-job.xml
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/!svn/ver/41524/oss-tm2/branches/Patch-2.0.1.1/src/main/resources/spring/applicationContext-job.xml
+END
+applicationContext.xml
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/!svn/ver/41524/oss-tm2/branches/Patch-2.0.1.1/src/main/resources/spring/applicationContext.xml
+END
