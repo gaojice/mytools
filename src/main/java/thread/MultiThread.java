@@ -3,25 +3,20 @@ package thread;
 public class MultiThread {
 
 	public static void main(String[] a) {
-		for (int i = 0; i < Integer.MAX_VALUE; i++) {
+		for (int i = 0; i < 8; i++) {
 			Thread thread = new Thread(new Worker());
 			thread.start();
 
 		}
 	}
-
 }
 
 class Worker implements Runnable {
 
 	public void run() {
+		Double d = 0d;
 		while (true) {
-			try {
-				Throwable t = new BusinessException("a", "b");
-				System.out.println(Thread.currentThread() + " " + t.getMessage());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			d += 1;
 		}
 	}
 }
