@@ -1,0 +1,15 @@
+package jms.queue;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MessageReceiver {
+	public void receive() {
+		System.out.println("oh yehhhhh");
+	}
+
+	public static void main(String[] args) {
+		new ClassPathXmlApplicationContext(new String[] { "applicationContext-jms-receiver.xml" });
+	}
+}

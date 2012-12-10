@@ -10,44 +10,25 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd"
 	default-autowire="byName" default-lazy-init="true">
-
-	<!--内嵌jms broker 
-	<amq:broker useJmx="true" persistent="false">
-		<amq:transportConnectors>
-			<amq:transportConnector uri="${jms.broker.url}" />
-		</amq:transportConnectors>
-	</amq:broker>
-	-->
-	
-	<bean id="propertyConfigurer"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>classpath*:jms.properties
-				</value>
-			</list>
-		</property>
-	</bean>
 	<context:component-scan base-package="jms"></context:component-scan>
-	<amq:connectionFactory id="jmsFactory" brokerURL="${jms.broker.url}" />
+	<bean id="redeliveryPolicy" class="org.apache.activemq.RedeliveryPolicy">
+		<property name="initialRedeliveryDelay" value="1000"></property>
+		<property name="maximumRedeliveries" value="0"></property>
+	</bean>
+	<amq:connectionFactory id="amqConnectionFactory"
+		brokerURL="tcp://172.16.6.191:61616">
+		<property name="redeliveryPolicy" ref="redeliveryPolicy" />
+	</amq:connectionFactory>
 	<bean id="connectionFactory"
 		class="org.springframework.jms.connection.CachingConnectionFactory">
-		<constructor-arg ref="jmsFactory" />
-		 
+		<constructor-arg ref="amqConnectionFactory" />
+		<property name="exceptionListener" ref="jmsExceptionListener" />
 		<property name="sessionCacheSize" value="100" />
 	</bean>
 
-	<!-- Spring JMS Template -->
-	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate" >
-		<constructor-arg ref="connectionFactory" />
-		<property name="defaultDestinationName" value="com.chinacache.oss.jms.task" />
-		<property name="sessionTransacted" value="true"/>
-	</bean>
-	<bean id="jmsTemplateWithLowPriority" class="org.springframework.jms.core.JmsTemplate" >
-		<constructor-arg ref="connectionFactory" />
-		<property name="defaultDestinationName" value="com.chinacache.oss.jms.task" />
-		<property name="sessionTransacted" value="true"/>
-		<property name="explicitQosEnabled" value="true" /><!-- 使 deliveryMode, priority, timeToLive设置生效-->  
-		<property name="priority" value="1" />
-	</bean>
+ 
+	<jms:listener-container>
+		<jms:listener destination="queue.orders" ref="messageReceiver"
+			method="receive" />
+	</jms:listener-container>
 </beans>
