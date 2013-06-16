@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MessageReceiver {
-	public void receive() {
-		System.out.println("oh yehhhhh");
+	public void receive(String message) {
+		System.out.println(message);
 	}
 
 	public static void main(String[] args) {
